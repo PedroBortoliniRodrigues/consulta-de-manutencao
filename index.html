@@ -16,7 +16,7 @@
 </head>
 <body class="bg-gray-900 bg-opacity-80 min-h-screen text-white">
 
- <!-- Logo da Hydro -->
+    <!-- Logo da Hydro -->
     <div class="absolute top-4 left-2 m-8">
         <a href="/">
             <img src="logohydro.png" alt="Logo Hydro" class="w-32 h-auto">
@@ -48,21 +48,21 @@
                                 name: 'QDCC', 
                                 imageUrl: 'qdcc.png',
                                 manualUrl: './manual_qdcc.pdf',
-                                proUrl: 'https://pam.inosa.hydro.com/document/313B47DF-12BE-4D38-A302-8D4C054AB926/inosa/version/0EE408F5-F9BC-4C14-8A98-E06B67B2EA1B'
+                                proUrl: 'PROpreventivapms.pdf'
                             },
                             { 
                                 id: '2', 
                                 name: 'BANCO DE BATERIAS', 
                                 imageUrl: 'bancodebaterias.jpg',
                                 manualUrl: './manual_banco_de_baterias.pdf',
-                                proUrl: 'https://pam.inosa.hydro.com/document/89D72CDB-5B87-4EC9-BD71-FD94089D9A61/inosa/version/A37410FF-A6DE-432C-9A19-01735ED83429'
+                                proUrl: 'https://pam.inosa.hydro.com/document/89D72CDB-5B87-4EC9-BD71-FD94089D9A61'
                             },
                             { 
                                 id: '3', 
                                 name: 'SISTEMA DE ALARME DE INCENDIO', 
                                 imageUrl: 'alarmedeincendio.jpg',
                                 manualUrl: './manual_alarme_incendio.pdf',
-                                proUrl: 'https://pam.inosa.hydro.com/document/313B47DF-12BE-4D38-A302-8D4C054AB926/inosa/version/0EE408F5-F9BC-4C14-8A98-E06B67B2EA1B'
+                                proUrl: 'https://pam.inosa.hydro.com/document/313B47DF-12BE-4D38-A302-8D4C054AB926'
                             }
                         ]
                     }
@@ -111,40 +111,33 @@
                     <div class="flex justify-around mb-6">
                         <a href="${selectedSubEquipment.manualUrl}" target="_blank" class="bg-blue-500 text-white px-4 py-2 rounded">Abrir Manual</a>
                         <a href="${selectedSubEquipment.proUrl}" target="_blank" class="bg-blue-500 text-white px-4 py-2 rounded">Abrir PRO</a>
-                        <button onclick="toggleNotes()" class="bg-blue-500 text-white px-4 py-2 rounded">Ver Notas de Manutenção</button>
+                        <button onclick="toggleNotes('${selectedSubEquipment.name}')" class="bg-blue-500 text-white px-4 py-2 rounded">Ver Notas de Manutenção</button>
                     </div>
-                    <div id="notesSection" class="hidden">
-                        <h2 class="text-white text-xl mb-2">Notas de Manutenção:</h2>
-                        <input type="text" id="noteSearchInput" placeholder="Pesquisar nota..." class="w-full p-3 mb-4 rounded-lg border border-gray-300 text-black" oninput="filterNotes()">
-                        <ul id="notesList">
-                            <li><a href="nota1.html" target="_blank" class="text-blue-400">Nota SAP 1</a></li>
-                            <li><a href="nota2.html" target="_blank" class="text-blue-400">Nota SAP 2</a></li>
-                        </ul>
-                    </div>
+                    <div id="notesSection" class="hidden"></div>
                 </div>`;
 
             document.getElementById('areaGallery').innerHTML = galleryHTML;
         }
 
-        function toggleNotes() {
+        async function toggleNotes(equipamento) {
             const notesSection = document.getElementById('notesSection');
             notesSection.classList.toggle('hidden');
-        }
 
-        function filterNotes() {
-            const filter = document.getElementById('noteSearchInput').value.toLowerCase();
-            const notes = document.querySelectorAll('#notesList li');
-            notes.forEach(note => {
-                const text = note.textContent.toLowerCase();
-                note.style.display = text.includes(filter) ? '' : 'none';
-            });
+            if (!notesSection.classList.contains('hidden')) {
+                const response = await fetch(`http://localhost:3000/notas?equipamento=${equipamento}`);
+                const notes = await response.json();
+
+                let notesHTML = '<h2 class="text-white text-xl mb-2">Notas de Manutenção:</h2><ul>';
+                notes.forEach(note => {
+                    notesHTML += `<li><a href="${note.url}" target="_blank" class="text-blue-400">${note.descricao} - ${note.data}</a></li>`;
+                });
+                notesHTML += '</ul>';
+                notesSection.innerHTML = notesHTML;
+            }
         }
 
         loadAreas();
-
-        document.getElementById('searchInput').addEventListener('input', (event) => {
-            loadAreas(event.target.value);
-        });
+        document.getElementById('searchInput').addEventListener('input', (event) => loadAreas(event.target.value));
     </script>
 </body>
 </html>
