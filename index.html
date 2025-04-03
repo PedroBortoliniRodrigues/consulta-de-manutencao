@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Manutenção - Hydro Mineração</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+    <style>
+        body {
+            background-image: url('https://www.hydro.com/globalassets/08-about-hydro/hydro-worldwide/brasil/paragominas/_rbl4479.jpg?quality=85&width=1024&height=434&rmode=crop&rsampler=bicubic&rxy=0.5,0.5&compand=true');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 bg-opacity-80 min-h-screen text-white">
+    <div class="container mx-auto py-22">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 mb-12">
+            <h1 class="text-3xl font-bold mb-6 text-center text-black">Consulta de Equipamento</h1>
+            <input type="text" id="searchInput" placeholder="Pesquisar área..." class="w-full p-3 mb-6 rounded-lg border border-gray-300 text-black">
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6" id="areaGallery"></div>
+        </div>
+    </div>
+
+    <script>
+        const areas = [
+            {
+                id: '1',
+                name: 'PMS 01',
+                imageUrl: 'pms01.png',
+                equipments: [
+                    {
+                        id: '1',
+                        name: 'Container',
+                        imageUrl: 'container133-01-6.jpg',
+                        equipments: [
+                            { 
+                                id: '1', 
+                                name: 'QDCC', 
+                                imageUrl: 'qdcc.png',
+                                manualUrl: './manual_qdcc.pdf',
+                                proUrl: 'https://pam.inosa.hydro.com/document/QDCC_PRO'
+                            },
+                            { 
+                                id: '2', 
+                                name: 'BANCO DE BATERIAS', 
+                                imageUrl: 'bancodebaterias.jpg',
+                                manualUrl: './manual_banco_de_baterias.pdf',
+                                proUrl: 'https://pam.inosa.hydro.com/document/BANCO_PRO'
+                            },
+                            { 
+                                id: '3', 
+                                name: 'SISTEMA DE ALARME DE INCENDIO', 
+                                imageUrl: 'alarmedeincendio.jpg',
+                                manualUrl: './manual_alarme_incendio.pdf',
+                                proUrl: 'https://pam.inosa.hydro.com/document/ALARME_PRO'
+                            }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        function loadAreas(filter = '') {
+            let galleryHTML = '';
+            areas.filter(area => area.name.toLowerCase().includes(filter.toLowerCase())).forEach(area => {
+                galleryHTML += `
+                    <div class='bg-gray-800 p-4 rounded-lg cursor-pointer hover:bg-gray-700' onclick="openArea('${area.id}')">
+                        <img src="${area.imageUrl}" alt="${area.name}" class="rounded-xl w-full h-48 object-cover mb-2">
+                        <h2 class="text-xl font-bold text-white text-center">${area.name}</h2>
+                    </div>`;
+            });
+            document.getElementById('areaGallery').innerHTML = galleryHTML;
+        }
+
+        function openArea(id) {
+            const selectedArea = areas.find(area => area.id === id);
+            let galleryHTML = '';
+            selectedArea.equipments.forEach(equipment => {
+                equipment.equipments.forEach(subEquipment => {
+                    galleryHTML += `
+                        <div class='bg-gray-800 p-4 rounded-lg cursor-pointer hover:bg-gray-700' onclick="openSubEquipment('${subEquipment.id}', '${equipment.id}', '${id}')">
+                            <img src="${subEquipment.imageUrl}" alt="${subEquipment.name}" class="rounded-xl w-full h-48 object-cover mb-2">
+                            <h2 class="text-xl font-bold text-white text-center">${subEquipment.name}</h2>
+                        </div>`;
+                });
+            });
+            document.getElementById('areaGallery').innerHTML = galleryHTML;
+        }
+
+        function openSubEquipment(subEquipmentId, equipmentId, areaId) {
+            const selectedArea = areas.find(area => area.id === areaId);
+            const selectedEquipment = selectedArea.equipments.find(eq => eq.id === equipmentId);
+            const selectedSubEquipment = selectedEquipment.equipments.find(subEq => subEq.id === subEquipmentId);
+
+            let galleryHTML = `
+                <div class="bg-gray-800 p-6 rounded-2xl shadow-2xl">
+                    <h1 class="text-2xl font-bold text-center text-white mb-6">${selectedSubEquipment.name}</h1>
+                    <div class="flex justify-center mb-4">
+                        <img src="${selectedSubEquipment.imageUrl}" alt="${selectedSubEquipment.name}" class="rounded-xl w-96 h-48 object-cover mb-4">
+                    </div>
+                    <div class="flex justify-around mb-6">
+                        <a href="${selectedSubEquipment.manualUrl}" target="_blank" class="bg-blue-500 text-white px-4 py-2 rounded">Abrir Manual</a>
+                        <a href="${selectedSubEquipment.proUrl}" target="_blank" class="bg-blue-500 text-white px-4 py-2 rounded">Abrir PRO</a>
+                        <button onclick="toggleNotes()" class="bg-blue-500 text-white px-4 py-2 rounded">Ver Notas de Manutenção</button>
+                    </div>
+                    <div id="notesSection" class="hidden">
+                        <h2 class="text-white text-xl mb-2">Notas de Manutenção:</h2>
+                        <ul>
+                            <li><a href="nota1.html" target="_blank" class="text-blue-400">Nota SAP 1</a></li>
+                            <li><a href="nota2.html" target="_blank" class="text-blue-400">Nota SAP 2</a></li>
+                        </ul>
+                    </div>
+                </div>`;
+
+            document.getElementById('areaGallery').innerHTML = galleryHTML;
+        }
+
+        function toggleNotes() {
+            const notesSection = document.getElementById('notesSection');
+            notesSection.classList.toggle('hidden');
+        }
+
+        loadAreas();
+    </script>
+</body>
+</html>
