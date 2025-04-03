@@ -15,7 +15,15 @@
     </style>
 </head>
 <body class="bg-gray-900 bg-opacity-80 min-h-screen text-white">
-    <div class="container mx-auto py-22">
+
+ <!-- Logo da Hydro -->
+    <div class="absolute top-4 left-2 m-8">
+        <a href="/">
+            <img src="logohydro.png" alt="Logo Hydro" class="w-32 h-auto">
+        </a>
+    </div>
+
+    <div class="container mx-auto py-5">
         <div class="bg-white rounded-2xl shadow-2xl p-8 mb-12">
             <h1 class="text-3xl font-bold mb-6 text-center text-black">Consulta de Equipamento</h1>
             <input type="text" id="searchInput" placeholder="Pesquisar área..." class="w-full p-3 mb-6 rounded-lg border border-gray-300 text-black">
@@ -40,21 +48,21 @@
                                 name: 'QDCC', 
                                 imageUrl: 'qdcc.png',
                                 manualUrl: './manual_qdcc.pdf',
-                                proUrl: 'https://pam.inosa.hydro.com/document/QDCC_PRO'
+                                proUrl: 'https://pam.inosa.hydro.com/document/313B47DF-12BE-4D38-A302-8D4C054AB926/inosa/version/0EE408F5-F9BC-4C14-8A98-E06B67B2EA1B'
                             },
                             { 
                                 id: '2', 
                                 name: 'BANCO DE BATERIAS', 
                                 imageUrl: 'bancodebaterias.jpg',
                                 manualUrl: './manual_banco_de_baterias.pdf',
-                                proUrl: 'https://pam.inosa.hydro.com/document/BANCO_PRO'
+                                proUrl: 'https://pam.inosa.hydro.com/document/89D72CDB-5B87-4EC9-BD71-FD94089D9A61/inosa/version/A37410FF-A6DE-432C-9A19-01735ED83429'
                             },
                             { 
                                 id: '3', 
                                 name: 'SISTEMA DE ALARME DE INCENDIO', 
                                 imageUrl: 'alarmedeincendio.jpg',
                                 manualUrl: './manual_alarme_incendio.pdf',
-                                proUrl: 'https://pam.inosa.hydro.com/document/ALARME_PRO'
+                                proUrl: 'https://pam.inosa.hydro.com/document/313B47DF-12BE-4D38-A302-8D4C054AB926/inosa/version/0EE408F5-F9BC-4C14-8A98-E06B67B2EA1B'
                             }
                         ]
                     }
@@ -107,7 +115,8 @@
                     </div>
                     <div id="notesSection" class="hidden">
                         <h2 class="text-white text-xl mb-2">Notas de Manutenção:</h2>
-                        <ul>
+                        <input type="text" id="noteSearchInput" placeholder="Pesquisar nota..." class="w-full p-3 mb-4 rounded-lg border border-gray-300 text-black" oninput="filterNotes()">
+                        <ul id="notesList">
                             <li><a href="nota1.html" target="_blank" class="text-blue-400">Nota SAP 1</a></li>
                             <li><a href="nota2.html" target="_blank" class="text-blue-400">Nota SAP 2</a></li>
                         </ul>
@@ -122,7 +131,20 @@
             notesSection.classList.toggle('hidden');
         }
 
+        function filterNotes() {
+            const filter = document.getElementById('noteSearchInput').value.toLowerCase();
+            const notes = document.querySelectorAll('#notesList li');
+            notes.forEach(note => {
+                const text = note.textContent.toLowerCase();
+                note.style.display = text.includes(filter) ? '' : 'none';
+            });
+        }
+
         loadAreas();
+
+        document.getElementById('searchInput').addEventListener('input', (event) => {
+            loadAreas(event.target.value);
+        });
     </script>
 </body>
 </html>
