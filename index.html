@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<!DOCTYPE html><html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,132 +11,326 @@
             background-repeat: no-repeat;
             background-attachment: fixed;
         }
+        html {
+            scroll-behavior: smooth;
+        }
     </style>
 </head>
-<body class="bg-gray-900 bg-opacity-80 min-h-screen text-white">
+<body class="bg-gray-900 bg-opacity-80 min-h-screen text-white"><!-- Spinner de carregamento -->
+<div id="spinner" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50 hidden">
+    <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
+</div>
 
-    <!-- Logo da Hydro -->
-    <div class="absolute top-4 left-2 m-8">
-        <a href="/">
-            <img src="logohydro.png" alt="Logo Hydro" class="w-32 h-auto">
-        </a>
+<!-- Logo da Hydro -->
+<div class="absolute top-4 left-2 m-4">
+    <a href="/">
+        <img src="logohydro.png" alt="Logo Hydro" class="w-24 md:w-32 h-auto">
+    </a>
+</div>
+
+<!-- Botão Voltar -->
+<div class="fixed top-4 right-4 z-40">
+    <button onclick="goBack()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg shadow-lg text-sm md:text-base">
+        ← Voltar
+    </button>
+</div>
+
+<!-- Conteúdo -->
+<div class="container mx-auto px-4 py-20">
+    <div class="bg-white bg-opacity-20 backdrop-blur-md rounded-2xl shadow-2xl p-6 md:p-8 mb-12">
+        <h1 class="text-2xl md:text-3xl font-bold mb-6 text-center text-white">Consulta de Equipamento</h1>
+        <input type="text" id="searchInput" placeholder="Pesquisar área..." class="w-full p-3 mb-6 rounded-lg border border-gray-300 text-black text-sm md:text-base">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="areaGallery"></div>
     </div>
+</div>
 
-    <div class="container mx-auto py-5">
-        <div class="bg-white rounded-2xl shadow-2xl p-8 mb-12">
-            <h1 class="text-3xl font-bold mb-6 text-center text-black">Consulta de Equipamento</h1>
-            <input type="text" id="searchInput" placeholder="Pesquisar área..." class="w-full p-3 mb-6 rounded-lg border border-gray-300 text-black">
-            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6" id="areaGallery"></div>
-        </div>
+<!-- Modal -->
+<div id="modal" class="fixed inset-0 bg-black bg-opacity-70 hidden z-50 items-center justify-center">
+    <div class="bg-white rounded-2xl p-6 max-w-2xl w-full relative">
+        <button onclick="closeModal()" class="absolute top-2 right-4 text-black font-bold text-xl">×</button>
+        <iframe id="modalFrame" src="" class="w-full h-96" frameborder="0"></iframe>
     </div>
+</div>
 
-    <script>
-        const areas = [
+<script>
+    const areas = [
+    {
+        id: '1',
+        name: 'PMS 01',
+        imageUrl: 'pms01.png',
+        equipments: [
             {
                 id: '1',
-                name: 'PMS 01',
-                imageUrl: 'pms01.png',
+                name: 'Container',
+                imageUrl: 'container133-01-6.jpg',
                 equipments: [
                     {
                         id: '1',
-                        name: 'Container',
-                        imageUrl: 'container133-01-6.jpg',
-                        equipments: [
-                            { 
-                                id: '1', 
-                                name: 'QDCC', 
-                                imageUrl: 'qdcc.png',
-                                manualUrl: './manual_qdcc.pdf',
-                                proUrl: 'PROpreventivapms.pdf'
-                            },
-                            { 
-                                id: '2', 
-                                name: 'BANCO DE BATERIAS', 
-                                imageUrl: 'bancodebaterias.jpg',
-                                manualUrl: './manual_banco_de_baterias.pdf',
-                                proUrl: 'https://pam.inosa.hydro.com/document/89D72CDB-5B87-4EC9-BD71-FD94089D9A61'
-                            },
-                            { 
-                                id: '3', 
-                                name: 'SISTEMA DE ALARME DE INCENDIO', 
-                                imageUrl: 'alarmedeincendio.jpg',
-                                manualUrl: './manual_alarme_incendio.pdf',
-                                proUrl: 'https://pam.inosa.hydro.com/document/313B47DF-12BE-4D38-A302-8D4C054AB926'
-                            }
-                        ]
+                        name: 'QDCC',
+                        imageUrl: 'qdcc.png',
+                        manualUrl: './manual_qdcc.pdf',
+                        proUrl: 'PROpreventivapms.pdf'
+                    },
+                    {
+                        id: '2',
+                        name: 'BANCO DE BATERIAS',
+                        imageUrl: 'bancodebaterias.jpg',
+                        manualUrl: './manual_banco_de_baterias.pdf',
+                        proUrl: 'https://pam.inosa.hydro.com/document/89D72CDB-5B87-4EC9-BD71-FD94089D9A61'
+                    },
+                    {
+                        id: '3',
+                        name: 'SISTEMA DE ALARME DE INCENDIO',
+                        imageUrl: 'alarmedeincendio.jpg',
+                        manualUrl: './manual_alarme_incendio.pdf',
+                        proUrl: 'https://pam.inosa.hydro.com/document/313B47DF-12BE-4D38-A302-8D4C054AB926'
                     }
                 ]
             }
-        ];
+        ]
+    },
+    {
+        id: '2',
+        name: 'PMS 02',
+        imageUrl: 'pms01.png',
+        equipments: [
+            {
+                id: '1',
+                name: 'Container',
+                imageUrl: 'container133-01-6.jpg',
+                equipments: [
+                    {
+                        id: '1',
+                        name: 'QDCC',
+                        imageUrl: 'qdcc.png',
+                        manualUrl: './manual_qdcc.pdf',
+                        proUrl: 'PROpreventivapms.pdf'
+                    },
+                    {
+                        id: '2',
+                        name: 'BANCO DE BATERIAS',
+                        imageUrl: 'bancodebaterias.jpg',
+                        manualUrl: './manual_banco_de_baterias.pdf',
+                        proUrl: 'https://pam.inosa.hydro.com/document/89D72CDB-5B87-4EC9-BD71-FD94089D9A61'
+                    },
+                    {
+                        id: '3',
+                        name: 'SISTEMA DE ALARME DE INCENDIO',
+                        imageUrl: 'alarmedeincendio.jpg',
+                        manualUrl: './manual_alarme_incendio.pdf',
+                        proUrl: 'https://pam.inosa.hydro.com/document/313B47DF-12BE-4D38-A302-8D4C054AB926'
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        id: '3',
+        name: 'PMS 03',
+        imageUrl: 'pms01.png',
+        equipments: [
+            {
+                id: '1',
+                name: 'Container',
+                imageUrl: 'container133-01-6.jpg',
+                equipments: [
+                    {
+                        id: '1',
+                        name: 'QDCC',
+                        imageUrl: 'qdcc.png',
+                        manualUrl: './manual_qdcc.pdf',
+                        proUrl: 'PROpreventivapms.pdf'
+                    },
+                    {
+                        id: '2',
+                        name: 'BANCO DE BATERIAS',
+                        imageUrl: 'bancodebaterias.jpg',
+                        manualUrl: './manual_banco_de_baterias.pdf',
+                        proUrl: 'https://pam.inosa.hydro.com/document/89D72CDB-5B87-4EC9-BD71-FD94089D9A61'
+                    },
+                    {
+                        id: '3',
+                        name: 'SISTEMA DE ALARME DE INCENDIO',
+                        imageUrl: 'alarmedeincendio.jpg',
+                        manualUrl: './manual_alarme_incendio.pdf',
+                        proUrl: 'https://pam.inosa.hydro.com/document/313B47DF-12BE-4D38-A302-8D4C054AB926'
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        id: '4',
+        name: 'PMS 04',
+        imageUrl: 'pms01.png',
+        equipments: [
+            {
+                id: '1',
+                name: 'Container',
+                imageUrl: 'container133-01-6.jpg',
+                equipments: [
+                    {
+                        id: '1',
+                        name: 'QDCC',
+                        imageUrl: 'qdcc.png',
+                        manualUrl: './manual_qdcc.pdf',
+                        proUrl: 'PROpreventivapms.pdf'
+                    },
+                    {
+                        id: '2',
+                        name: 'BANCO DE BATERIAS',
+                        imageUrl: 'bancodebaterias.jpg',
+                        manualUrl: './manual_banco_de_baterias.pdf',
+                        proUrl: 'https://pam.inosa.hydro.com/document/89D72CDB-5B87-4EC9-BD71-FD94089D9A61'
+                    },
+                    {
+                        id: '3',
+                        name: 'SISTEMA DE ALARME DE INCENDIO',
+                        imageUrl: 'alarmedeincendio.jpg',
+                        manualUrl: './manual_alarme_incendio.pdf',
+                        proUrl: 'https://pam.inosa.hydro.com/document/313B47DF-12BE-4D38-A302-8D4C054AB926'
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        id: '5',
+        name: 'Galpão de Lona',
+        imageUrl: 'pms01.png',
+        equipments: [
+            {
+                id: '1',
+                name: 'Container',
+                imageUrl: 'container133-01-6.jpg',
+                equipments: [
+                    {
+                        id: '1',
+                        name: 'QDCC',
+                        imageUrl: 'qdcc.png',
+                        manualUrl: './manual_qdcc.pdf',
+                        proUrl: 'PROpreventivapms.pdf'
+                    },
+                    {
+                        id: '2',
+                        name: 'BANCO DE BATERIAS',
+                        imageUrl: 'bancodebaterias.jpg',
+                        manualUrl: './manual_banco_de_baterias.pdf',
+                        proUrl: 'https://pam.inosa.hydro.com/document/89D72CDB-5B87-4EC9-BD71-FD94089D9A61'
+                    },
+                    {
+                        id: '3',
+                        name: 'SISTEMA DE ALARME DE INCENDIO',
+                        imageUrl: 'alarmedeincendio.jpg',
+                        manualUrl: './manual_alarme_incendio.pdf',
+                        proUrl: 'https://pam.inosa.hydro.com/document/313B47DF-12BE-4D38-A302-8D4C054AB926'
+                    }
+                ]
+            }
+        ]
+    }
+];
 
-        function loadAreas(filter = '') {
-            let galleryHTML = '';
-            areas.filter(area => area.name.toLowerCase().includes(filter.toLowerCase())).forEach(area => {
+    function loadAreas(filter = '') {
+        let galleryHTML = '';
+        areas.filter(area => area.name.toLowerCase().includes(filter.toLowerCase())).forEach(area => {
+            galleryHTML += `
+                <div class='bg-gray-800 p-4 rounded-lg cursor-pointer hover:bg-gray-700 transition-all duration-300 shadow-xl' onclick="openArea('${area.id}')">
+                    <img src="${area.imageUrl}" alt="${area.name}" class="rounded-xl w-full h-48 object-cover mb-2">
+                    <h2 class="text-xl font-bold text-white text-center">${area.name}</h2>
+                </div>`;
+        });
+        document.getElementById('areaGallery').innerHTML = galleryHTML;
+    }
+
+    function openArea(id) {
+        navigationStack.push(() => loadAreas(document.getElementById('searchInput').value));
+        const selectedArea = areas.find(area => area.id === id);
+        let galleryHTML = '';
+        selectedArea.equipments.forEach(equipment => {
+            equipment.equipments.forEach(subEquipment => {
                 galleryHTML += `
-                    <div class='bg-gray-800 p-4 rounded-lg cursor-pointer hover:bg-gray-700' onclick="openArea('${area.id}')">
-                        <img src="${area.imageUrl}" alt="${area.name}" class="rounded-xl w-full h-48 object-cover mb-2">
-                        <h2 class="text-xl font-bold text-white text-center">${area.name}</h2>
+                    <div class='bg-gray-800 p-4 rounded-lg cursor-pointer hover:bg-gray-700 transition-all duration-300 shadow-md' onclick="openSubEquipment('${subEquipment.id}', '${equipment.id}', '${id}')">
+                        <img src="${subEquipment.imageUrl}" alt="${subEquipment.name}" class="rounded-xl w-full h-48 object-cover mb-2">
+                        <h2 class="text-xl font-bold text-white text-center">${subEquipment.name}</h2>
                     </div>`;
             });
-            document.getElementById('areaGallery').innerHTML = galleryHTML;
-        }
+        });
+        document.getElementById('areaGallery').innerHTML = galleryHTML;
+    }
 
-        function openArea(id) {
-            const selectedArea = areas.find(area => area.id === id);
-            let galleryHTML = '';
-            selectedArea.equipments.forEach(equipment => {
-                equipment.equipments.forEach(subEquipment => {
-                    galleryHTML += `
-                        <div class='bg-gray-800 p-4 rounded-lg cursor-pointer hover:bg-gray-700' onclick="openSubEquipment('${subEquipment.id}', '${equipment.id}', '${id}')">
-                            <img src="${subEquipment.imageUrl}" alt="${subEquipment.name}" class="rounded-xl w-full h-48 object-cover mb-2">
-                            <h2 class="text-xl font-bold text-white text-center">${subEquipment.name}</h2>
-                        </div>`;
-                });
-            });
-            document.getElementById('areaGallery').innerHTML = galleryHTML;
-        }
+    function openSubEquipment(subEquipmentId, equipmentId, areaId) {
+        navigationStack.push(() => openArea(areaId));
 
-        function openSubEquipment(subEquipmentId, equipmentId, areaId) {
-            const selectedArea = areas.find(area => area.id === areaId);
-            const selectedEquipment = selectedArea.equipments.find(eq => eq.id === equipmentId);
-            const selectedSubEquipment = selectedEquipment.equipments.find(subEq => subEq.id === subEquipmentId);
+        const selectedArea = areas.find(area => area.id === areaId);
+        const selectedEquipment = selectedArea.equipments.find(eq => eq.id === equipmentId);
+        const selectedSubEquipment = selectedEquipment.equipments.find(subEq => subEq.id === subEquipmentId);
 
-            let galleryHTML = `
-                <div class="bg-gray-800 p-6 rounded-2xl shadow-2xl">
-                    <h1 class="text-2xl font-bold text-center text-white mb-6">${selectedSubEquipment.name}</h1>
-                    <div class="flex justify-center mb-4">
-                        <img src="${selectedSubEquipment.imageUrl}" alt="${selectedSubEquipment.name}" class="rounded-xl w-96 h-48 object-cover mb-4">
-                    </div>
-                    <div class="flex justify-around mb-6">
-                        <a href="${selectedSubEquipment.manualUrl}" target="_blank" class="bg-blue-500 text-white px-4 py-2 rounded">Abrir Manual</a>
-                        <a href="${selectedSubEquipment.proUrl}" target="_blank" class="bg-blue-500 text-white px-4 py-2 rounded">Abrir PRO</a>
-                        <button onclick="toggleNotes('${selectedSubEquipment.name}')" class="bg-blue-500 text-white px-4 py-2 rounded">Ver Notas de Manutenção</button>
-                    </div>
-                    <div id="notesSection" class="hidden"></div>
-                </div>`;
+        let galleryHTML = `
+            <div class="bg-gray-800 p-6 rounded-2xl shadow-2xl">
+                <h1 class="text-3xl font-bold text-center text-white mb-6">${selectedSubEquipment.name}</h1>
+                <div class="flex justify-center mb-4">
+                    <img src="${selectedSubEquipment.imageUrl}" alt="${selectedSubEquipment.name}" class="rounded-xl w-full max-w-md object-cover mb-4 transition-all duration-300">
+                </div>
+                <div class="flex flex-col sm:flex-row justify-around gap-4 mb-6 text-base">
+                    <button onclick="openModal('${selectedSubEquipment.manualUrl}')" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Abrir Manual</button>
+                    <button onclick="openModal('${selectedSubEquipment.proUrl}')" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Abrir PRO</button>
+                    <button onclick="toggleNotes('${selectedSubEquipment.name}')" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Ver Notas de Manutenção</button>
+                </div>
+                <div id="notesSection" class="hidden"></div>
+            </div>`;
 
-            document.getElementById('areaGallery').innerHTML = galleryHTML;
-        }
+        document.getElementById('areaGallery').innerHTML = galleryHTML;
+    }
 
-        async function toggleNotes(equipamento) {
-            const notesSection = document.getElementById('notesSection');
-            notesSection.classList.toggle('hidden');
+    async function toggleNotes(equipamento) {
+        const notesSection = document.getElementById('notesSection');
+        notesSection.classList.toggle('hidden');
 
-            if (!notesSection.classList.contains('hidden')) {
+        if (!notesSection.classList.contains('hidden')) {
+            document.getElementById('spinner').classList.remove('hidden');
+            try {
                 const response = await fetch(`http://localhost:3000/notas?equipamento=${equipamento}`);
                 const notes = await response.json();
 
-                let notesHTML = '<h2 class="text-white text-xl mb-2">Notas de Manutenção:</h2><ul>';
+                let notesHTML = '<h2 class="text-white text-xl mb-2">Notas de Manutenção:</h2><ul class="list-disc list-inside">';
                 notes.forEach(note => {
-                    notesHTML += `<li><a href="${note.url}" target="_blank" class="text-blue-400">${note.descricao} - ${note.data}</a></li>`;
+                    notesHTML += `<li><a href="${note.url}" target="_blank" class="text-blue-400 hover:underline">${note.descricao} - ${note.data}</a></li>`;
                 });
                 notesHTML += '</ul>';
                 notesSection.innerHTML = notesHTML;
+            } catch (err) {
+                notesSection.innerHTML = '<p class="text-red-500">Erro ao carregar notas.</p>';
+            } finally {
+                document.getElementById('spinner').classList.add('hidden');
             }
         }
+    }
 
-        loadAreas();
-        document.getElementById('searchInput').addEventListener('input', (event) => loadAreas(event.target.value));
-    </script>
+    function openModal(url) {
+        document.getElementById('modalFrame').src = url;
+        document.getElementById('modal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+        document.getElementById('modalFrame').src = '';
+        document.getElementById('modal').classList.add('hidden');
+    }
+
+    let navigationStack = [];
+
+    function goBack() {
+        if (navigationStack.length > 0) {
+            const previousView = navigationStack.pop();
+            previousView();
+        } else {
+            loadAreas();
+        }
+    }
+
+    loadAreas();
+    document.getElementById('searchInput').addEventListener('input', (event) => loadAreas(event.target.value));
+</script>
+
 </body>
 </html>
